@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بث الحقائق المذهلة - ناطق صوتي</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #020208;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* خلفية الفضاء المتحركة */
+        .space-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1a0b36 0%, #05021a 70%, #000000 100%);
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .stars {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            box-shadow: 
+                10vw 20vh 2px #fff, 30vw 40vh 1px #fff, 50vw 10vh 3px #fff, 
+                70vw 80vh 2px #fff, 90vw 30vh 1px #fff, 25vw 75vh 2px #fff,
+                85vw 15vh 3px #fff, 40vw 90vh 1px #fff, 60vw 60vh 2px #fff;
+            animation: drift 120s linear infinite;
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+
+        .nebula {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 210, 255, 0.08) 0%, rgba(150, 0, 255, 0.05) 50%, transparent 100%);
+            top: -10%;
+            left: -10%;
+            animation: floatNebula 40s ease-in-out infinite alternate;
+            filter: blur(40px);
+        }
+
+        @keyframes drift {
+            from { transform: translateY(0px) rotate(0deg); }
+            to { transform: translateY(-1000px) rotate(360deg); }
+        }
+
+        @keyframes floatNebula {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(200px, 100px) scale(1.3); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 950px;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .header-tag {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff007b, #7928ca);
+            color: white;
+            padding: 8px 25px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(255, 0, 123, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .fact-box {
+            background: rgba(10, 10, 25, 0.75);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 50px 40px;
+            min-height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.05);
+            backdrop-filter: blur(15px);
+        }
+
+        .fact-text {
+            font-size: 2.3rem;
+            line-height: 1.7;
+            font-weight: 700;
+            color: #f1f5f9;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fact-text.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 35px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00df89, #00d2ff);
+            box-shadow: 0 0 10px #00d2ff;
+        }
+
+        /* زر البدء لتفعيل الصوت (شرط أساسي من المتصفحات) */
+        .start-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 15, 0.95);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #00df89, #00d2ff);
+            border: none;
+            color: #000;
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(0, 223, 137, 0.4);
+            transition: transform 0.2s;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .ticker-wrap {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(5, 5, 15, 0.9);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 0;
+            z-index: 20;
+        }
+
+        .ticker {
+            display: flex; white-space: nowrap;
+            animation: tickerMove 30s linear infinite;
+        }
+
+        .ticker-item {
+            display: inline-block; padding: 0 30px;
+            font-size: 1.1rem; color: #00ffcc; font-weight: bold;
+        }
+
+        @keyframes tickerMove {
+            0% { transform: translate3d(100%, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.04); box-shadow: 0 0 30px rgba(255, 0, 123, 0.8); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة بدء البث لتفعيل الصوت -->
+    <div id="start-screen" class="start-overlay">
+        <h2 style="margin-bottom: 20px; text-align: center;">جاهز لإطلاق البث المباشر الناطق؟</h2>
+        <button class="start-btn" onclick="startStream()">اضغط هنا لتفعيل الصوت وبدء البث</button>
+    </div>
+
+    <div class="space-bg">
+        <div class="stars"></div>
+        <div class="nebula"></div>
+    </div>
+
+    <div class="container">
+        <div class="header-tag">هل تعلم؟ .. حقائق مذهلة حول الكون والأرض</div>
+        
+        <div class="fact-box">
+            <div id="fact-text" class="fact-text">جاري تشغيل النظام الصوتي الفلكي...</div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div id="progress" class="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item">🪐 سبحان الله وبحمده سبحان الله العظيم</div>
+            <div class="ticker-item">💡 تفاعلكم باللايك والمشاركة يدعم استمرار البث المباشر</div>
+            <div class="ticker-item">🌍 الأرض ليست كروية تماماً، بل منبعجة عند خط الاستواء!</div>
+            <div class="ticker-item">🌌 تحتوي مجرتنا وحدهـا على أكثر من 100 مليار كوكب!</div>
+            <div class="ticker-item">⭐ اكتبوا في التعليقات ما هي أكثر حقيقة صدمتكم اليوم؟</div>
+        </div>
+    </div>
+
+    <script>
+        const facts = [
+            "اليوم الواحد في كوكب الزهرة أطول من سنة كاملة هناك! الزهرة يستغرق مئتين وثلاثة وأربعين يوماً أرضياً ليدور حول نفسه.",
+            "النجم النيوتروني كثيف جداً لدرجة أن ملعقة صغيرة من مادته تزن حوالي ستة مليارات طن على كوكب الأرض!",
+            "بدلة الفضاء الكاملة من وكالة ناسا تكلف حوالي اثني عشر مليون دولار أمريكي وصممت لحماية تامة.",
+            "الضوء الذي نراه من الشمس اليوم غادرها قبل ثماني دقائق وعشرين ثانية فقط، نحن نرى الماضي دائماً!",
+            "في الفضاء الخارجي، إذا تلامست قطعتان من نفس النوع من المعدن، فسوف تلتصقان وتلتحمان للأبد تلقائياً.",
+            "كوكب المشتري ضخم جداً لدرجة أنه يمكن أن يتسع لجميع كواكب المجموعة الشمسية الأخرى مجتمعة داخله.",
+            "أعمق نقطة على وجه الأرض هي خندق ماريانا في المحيط الهادئ، وعمقها يصل لقرابة أحد عشر كيلومتراً تحت الماء.",
+            "نواة الأرض حارة جداً، وتصل درجة حرارتها إلى ستة آلاف درجة مئوية، وهي نفس درجة حرارة سطح الشمس تماماً!",
+            "الكون يتوسع باستمرار وبسرعة تفوق سرعة الضوء في الأطراف البعيدة، مما يجعل رصد آخره مستحيلاً.",
+            "يوجد كوكب يدعى كانكري خمسة وخمسين يتكون ثلثه كاملاً من الألماس الخالص وهو أكبر من الأرض بمرتين.",
+            "المطر في كوكب زحل والمشتري ليس ماءً، بل تمطر السماء هناك ألماساً بسبب الضغط الشديد على الكربون!",
+            "لو تمكنت من السفر بسرعة الضوء، فستحتاج إلى مئة ألف سنة لتجتاز مجرتنا درب التبانة فقط.",
+            "أعلى قمة جبلية في المجموعة الشمسية ليست إيفرست، بل هو جبل أوليمبوس على كوكب المريخ، وهو أعلى بثلاث مرات من إيفرست!",
+            "هناك كميات مياه في الفضاء الخارجي تطفو على شكل سحابة ضخمة تعادل مئة وأربعين تريليون مرة كل مياه محيطات الأرض.",
+            "آثار أقدام رواد الفضاء على سطح القمر ستبقى كما هي لمدة مئة مليون سنة، لعدم وجود غلاف جوي أو رياح هناك.",
+            "الحوت الأزرق هو أضخم كائن عاش على الأرض، ولسانه وحده يزن أكثر من وزن فيل كامل!",
+            "الغلاف الجوي للأرض ينتهي فعلياً عند خط وهمي يُدعى خط كارمان على ارتفاع مئة كيلومتر فوق سطح البحر.",
+            "حوالي تسعة وتسعين بالمئة من كتلة المجموعة الشمسية بأكملها تتركز داخل الشمس وحدهـا، والباقي موزّع على الكواكب.",
+            "يوجد في دماغ الإنسان خلايا عصبية وروابط تفوق عدد النجوم الموجودة في مجرتنا درب التبانة بأكملها.",
+            "تستغرق الشمس حوالي مئتين وثلاثين مليون سنة لتكمل دورة واحدة فقط حول مركز مجرة درب التبانة.",
+            "كوكب أورانوس يميل على جانبه بشكل حاد جداً، لدرجة أن الصيف هناك يستمر لواحد وعشرين عاماً متواصلة من النهار والظلام!",
+            "الأكسجين الذي نتنفسه تنتج النباتات البحرية والطحالب أكثر من خمسين بالمئة منه، وليس الغابات البرية.",
+            "إذا وُضع كوكب زحل في حوض ماء ضخم جداً يتسع له، فإنه سيطفو على السطح لأن كثافته أقل من كثافة الماء!",
+            "يتساقط على كوكب الأرض حوالي مئة طن من الغبار الفضائي والنيازك الصغيرة جداً يومياً، لكنها تحترق في الغلاف الجوي.",
+            "المسافة بين الأرض والقمر تتسع بمقدار ثلاثة سنتيمترات وثمانية أعشار كل سنة، حيث يبتعد القمر عنا ببطء شديد."
+        ];
+
+        let currentIdx = 0;
+        const displayDuration = 18000; // تم زيادة الوقت لـ 18 ثانية لإعطاء الصوت براحة للقراءة
+        const updateInterval = 50; 
+        
+        const factTextEl = document.getElementById("fact-text");
+        const progressBarEl = document.getElementById("progress");
+
+        // دالة نطق النصوص الذكية
+        function speakText(text) {
+            // إلغاء أي صوت يعمل حالياً لمنع التداخل
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ar-SA'; // لغة عربية فصحى
+            utterance.rate = 0.85;    // سرعة القراءة (0.85 هادئة وفخمة ومريحة للمستمع)
+            utterance.pitch = 0.9;     // طبقة الصوت (تم تخفيضها قليلاً لتعطي طابع رجولي رخيم وعميق)
+
+            // محاولة اختيار صوت رجل إذا كان متوفراً في نظام التشغيل
+            const voices = window.speechSynthesis.getVoices();
+            // البحث عن أصوات عربية محسنة مثل المساعد الذكي
+            const arabicVoice = voices.find(voice => voice.lang.includes('ar') && (voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('google') || voice.name.toLowerCase().includes('nafi') || voice.name.toLowerCase().includes('maged')));
+            
+            if (arabicVoice) {
+                utterance.voice = arabicVoice;
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function showNextFact() {
+            factTextEl.classList.remove("active");
+            
+            setTimeout(() => {
+                const currentFact = facts[currentIdx];
+                factTextEl.innerText = currentFact;
+                factTextEl.classList.add("active");
+                
+                // تشغيل الصوت لقراءة الحقيقة الحالية
+                speakText(currentFact);
+                
+                currentIdx = (currentIdx + 1) % facts.length;
+                resetProgressBar();
+            }, 600);
+        }
+
+        function resetProgressBar() {
+            let elapsed = 0;
+            clearInterval(window.progressTimer);
+            
+            window.progressTimer = setInterval(() => {
+                elapsed += updateInterval;
+                let percentage = (elapsed / displayDuration) * 100;
+                progressBarEl.style.width = percentage + "%";
+                
+                if (elapsed >= displayDuration) {
+                    clearInterval(window.progressTimer);
+                    showNextFact();
+                }
+            }, updateInterval);
+        }
+
+        // دالة بدء البث بعد ضغط الزر
+        function startStream() {
+            document.getElementById("start-screen").style.display = "none";
+            facts.sort(() => Math.random() - 0.5);
+            showNextFact();
+        }
+
+        // تحميل الأصوات مسبقاً في المتصفح لضمان عملها
+        window.speechSynthesis.onvoiceschanged = () => {};
+    </script>
+</body>
+</html>
