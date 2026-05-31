@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بث الحقائق المذهلة - ناطق صوتي</title>
+    <title>بث الحقائق المذهلة - نسخة الموسيقى الهادئة المباشرة</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
 
@@ -141,36 +141,6 @@
             box-shadow: 0 0 10px #00d2ff;
         }
 
-        /* زر البدء لتفعيل الصوت (شرط أساسي من المتصفحات) */
-        .start-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 5, 15, 0.95);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .start-btn {
-            background: linear-gradient(45deg, #00df89, #00d2ff);
-            border: none;
-            color: #000;
-            padding: 20px 40px;
-            font-size: 1.5rem;
-            font-weight: 900;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 0 30px rgba(0, 223, 137, 0.4);
-            transition: transform 0.2s;
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .start-btn:hover {
-            transform: scale(1.05);
-        }
-
         .ticker-wrap {
             position: absolute;
             bottom: 0; left: 0; width: 100%;
@@ -204,11 +174,7 @@
 </head>
 <body>
 
-    <!-- شاشة بدء البث لتفعيل الصوت -->
-    <div id="start-screen" class="start-overlay">
-        <h2 style="margin-bottom: 20px; text-align: center;">جاهز لإطلاق البث المباشر الناطق؟</h2>
-        <button class="start-btn" onclick="startStream()">اضغط هنا لتفعيل الصوت وبدء البث</button>
-    </div>
+    <audio id="bg-music" loop autoplay src="https://assets.mixkit.co/music/preview/mixkit-space-ambient-683.mp3"></audio>
 
     <div class="space-bg">
         <div class="stars"></div>
@@ -219,7 +185,7 @@
         <div class="header-tag">هل تعلم؟ .. حقائق مذهلة حول الكون والأرض</div>
         
         <div class="fact-box">
-            <div id="fact-text" class="fact-text">جاري تشغيل النظام الصوتي الفلكي...</div>
+            <div id="fact-text" class="fact-text">جاري تحميل نظام الحقائق الفلكية...</div>
         </div>
 
         <div class="progress-bar-container">
@@ -250,7 +216,7 @@
             "الكون يتوسع باستمرار وبسرعة تفوق سرعة الضوء في الأطراف البعيدة، مما يجعل رصد آخره مستحيلاً.",
             "يوجد كوكب يدعى كانكري خمسة وخمسين يتكون ثلثه كاملاً من الألماس الخالص وهو أكبر من الأرض بمرتين.",
             "المطر في كوكب زحل والمشتري ليس ماءً، بل تمطر السماء هناك ألماساً بسبب الضغط الشديد على الكربون!",
-            "لو تمكنت من السفر بسرعة الضوء، فستحتاج إلى مئة ألف سنة لتجتاز مجرتنا درب التبانة فقط.",
+            "لو تمكنت من السفر بسرعة الضوء, فستحتاج إلى مئة ألف سنة لتجتاز مجرتنا درب التبانة فقط.",
             "أعلى قمة جبلية في المجموعة الشمسية ليست إيفرست، بل هو جبل أوليمبوس على كوكب المريخ، وهو أعلى بثلاث مرات من إيفرست!",
             "هناك كميات مياه في الفضاء الخارجي تطفو على شكل سحابة ضخمة تعادل مئة وأربعين تريليون مرة كل مياه محيطات الأرض.",
             "آثار أقدام رواد الفضاء على سطح القمر ستبقى كما هي لمدة مئة مليون سنة، لعدم وجود غلاف جوي أو رياح هناك.",
@@ -267,33 +233,12 @@
         ];
 
         let currentIdx = 0;
-        const displayDuration = 18000; // تم زيادة الوقت لـ 18 ثانية لإعطاء الصوت براحة للقراءة
+        const displayDuration = 12000; // تم تقليل المدة لـ 12 ثانية لتصبح الحركة أسرع ومتناسقة مع القراءة البصرية فقط
         const updateInterval = 50; 
         
         const factTextEl = document.getElementById("fact-text");
         const progressBarEl = document.getElementById("progress");
-
-        // دالة نطق النصوص الذكية
-        function speakText(text) {
-            // إلغاء أي صوت يعمل حالياً لمنع التداخل
-            window.speechSynthesis.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'ar-SA'; // لغة عربية فصحى
-            utterance.rate = 0.85;    // سرعة القراءة (0.85 هادئة وفخمة ومريحة للمستمع)
-            utterance.pitch = 0.9;     // طبقة الصوت (تم تخفيضها قليلاً لتعطي طابع رجولي رخيم وعميق)
-
-            // محاولة اختيار صوت رجل إذا كان متوفراً في نظام التشغيل
-            const voices = window.speechSynthesis.getVoices();
-            // البحث عن أصوات عربية محسنة مثل المساعد الذكي
-            const arabicVoice = voices.find(voice => voice.lang.includes('ar') && (voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('google') || voice.name.toLowerCase().includes('nafi') || voice.name.toLowerCase().includes('maged')));
-            
-            if (arabicVoice) {
-                utterance.voice = arabicVoice;
-            }
-
-            window.speechSynthesis.speak(utterance);
-        }
+        const musicEl = document.getElementById("bg-music");
 
         function showNextFact() {
             factTextEl.classList.remove("active");
@@ -302,9 +247,6 @@
                 const currentFact = facts[currentIdx];
                 factTextEl.innerText = currentFact;
                 factTextEl.classList.add("active");
-                
-                // تشغيل الصوت لقراءة الحقيقة الحالية
-                speakText(currentFact);
                 
                 currentIdx = (currentIdx + 1) % facts.length;
                 resetProgressBar();
@@ -327,15 +269,14 @@
             }, updateInterval);
         }
 
-        // دالة بدء البث بعد ضغط الزر
-        function startStream() {
-            document.getElementById("start-screen").style.display = "none";
+        // بدء النظام فوراً عند تحميل الصفحة دون أي شاشات توقف
+        window.onload = () => {
             facts.sort(() => Math.random() - 0.5);
             showNextFact();
-        }
-
-        // تحميل الأصوات مسبقاً في المتصفح لضمان عملها
-        window.speechSynthesis.onvoiceschanged = () => {};
+            
+            // محاولة لتشغيل الموسيقى بنسبة صوت منخفضة وهادئة جداً (20%) في الخلفية
+            musicEl.volume = 0.2;
+        };
     </script>
 </body>
 </html>
